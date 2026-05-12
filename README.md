@@ -99,6 +99,14 @@ interface FloorElement {
 - `react-dom >= 18`
 - `react-zoom-pan-pinch >= 3`
 
+## Local Development
+
+```bash
+pnpm install          # install root + demo dependencies
+pnpm build            # build library
+cd demo && pnpm dev   # start demo dev server at http://localhost:5173
+```
+
 ## License
 
 MIT
