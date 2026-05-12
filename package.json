@@ -1,0 +1,56 @@
+{
+  "name": "school-floor-map",
+  "version": "0.1.0",
+  "description": "Interactive school floor plan React component with zoom/pan support",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./data/bssm": {
+      "types": "./dist/data/bssm.d.ts",
+      "import": "./dist/data/bssm.mjs",
+      "require": "./dist/data/bssm.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "react-zoom-pan-pinch": ">=3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-zoom-pan-pinch": "^4.0.3",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.0"
+  },
+  "keywords": [
+    "react",
+    "floor-plan",
+    "school",
+    "map",
+    "zoom",
+    "pan"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "sideEffects": false
+}
