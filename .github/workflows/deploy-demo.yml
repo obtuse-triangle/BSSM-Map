@@ -38,7 +38,7 @@ jobs:
       - name: Build demo
         run: cd demo && pnpm build
         env:
-          VITE_BASE: /school-floor-map/
+          VITE_BASE: /BSSM-Map/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

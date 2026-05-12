@@ -2,6 +2,10 @@
 
 Interactive school floor plan React component with zoom/pan support.
 
+## Demo
+
+**[Live Demo](https://obtuse-triangle.github.io/BSSM-Map/)** — BSSM school floor map
+
 ## Install
 
 ```bash
