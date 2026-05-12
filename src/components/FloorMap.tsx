@@ -89,7 +89,7 @@ const styles = {
   mapContent: {
     width: "100%",
     height: "100%",
-    padding: "32px 6%",
+    padding: "32px 0",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
