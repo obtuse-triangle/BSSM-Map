@@ -5,6 +5,8 @@ import {
 } from "react-zoom-pan-pinch";
 import type { FloorMapProps, FloorElement } from "../types";
 
+const MAP_CANVAS_SIZE = 1200;
+
 const styles = {
   container: {
     display: "flex",
@@ -20,16 +22,20 @@ const styles = {
     padding: "12px 16px",
     borderBottom: "1px solid #e5e7eb",
     backgroundColor: "#fff",
+    overflowX: "auto" as const,
+    WebkitOverflowScrolling: "touch" as const,
     flexShrink: 0,
   },
   tab: (active: boolean) => ({
     padding: "8px 16px",
+    minHeight: "40px",
     borderRadius: "8px",
     fontSize: "14px",
     fontWeight: 500,
     border: "none",
     cursor: "pointer",
     transition: "all 0.15s",
+    whiteSpace: "nowrap" as const,
     backgroundColor: active ? "#2563eb" : "#f3f4f6",
     color: active ? "#fff" : "#4b5563",
   }),
@@ -40,6 +46,11 @@ const styles = {
     gap: "8px",
     fontSize: "14px",
     color: "#6b7280",
+    minWidth: 0,
+    maxWidth: "200px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   },
   selectedPlaceBadge: {
     padding: "4px 12px",
@@ -71,8 +82,8 @@ const styles = {
     zIndex: 10,
   },
   zoomButton: {
-    width: "40px",
-    height: "40px",
+    width: "44px",
+    height: "44px",
     backgroundColor: "#fff",
     borderRadius: "8px",
     border: "1px solid #e5e7eb",
@@ -93,6 +104,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    boxSizing: "border-box" as const,
   },
   mapWrapper: {
     position: "relative" as const,
@@ -107,18 +119,25 @@ const styles = {
     textAlign: "center" as const,
     border: "1px solid",
     fontWeight: 550,
-    fontSize: "10px",
     transition: "all 0.15s",
     overflow: "hidden",
     wordBreak: "break-all" as const,
-    padding: "1px",
-    lineHeight: "1.2",
+    whiteSpace: "normal" as const,
+    padding: "2px",
+    lineHeight: "1.25",
     ...getStyleForState(isSelected, isInteractive),
   }),
   elementName: {
-    fontSize: "10px",
-    lineHeight: "1.2",
+    width: "100%",
+    maxWidth: "100%",
+    display: "block" as const,
+    fontSize: "clamp(10px, 2.4vw, 13px)",
+    lineHeight: "1.25",
+    whiteSpace: "normal" as const,
+    wordBreak: "break-all" as const,
     pointerEvents: "none" as const,
+    overflow: "hidden",
+    textAlign: "center" as const,
   },
 };
 
@@ -243,7 +262,10 @@ export function FloorMap({
 
               <TransformComponent
                 wrapperStyle={{ width: "100%", height: "100%" }}
-                contentStyle={{ width: "100%", height: "100%" }}
+                contentStyle={{
+                  width: `${MAP_CANVAS_SIZE}px`,
+                  height: `${MAP_CANVAS_SIZE}px`,
+                }}
               >
                 <div style={styles.mapContent}>
                   <div style={styles.mapWrapper}>
@@ -261,7 +283,7 @@ export function FloorMap({
                             height: `${el.height}%`,
                           }}
                         >
-                          {el.name}
+                          <span style={styles.elementName}>{el.name}</span>
                         </div>
                       );
                     })}
