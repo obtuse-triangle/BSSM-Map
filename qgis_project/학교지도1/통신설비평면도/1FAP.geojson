@@ -1,0 +1,21 @@
+{
+"type": "FeatureCollection",
+"name": "1FAP",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::5183" } },
+"features": [
+{ "type": "Feature", "properties": { "APName": "MA-1F-A06" }, "geometry": { "type": "Point", "coordinates": [ 191248.547235398116754, 188085.014857686095638 ] } },
+{ "type": "Feature", "properties": { "APName": "MA-1F-A05" }, "geometry": { "type": "Point", "coordinates": [ 191238.984037295420421, 188084.810770588665036 ] } },
+{ "type": "Feature", "properties": { "APName": "MA-1F-A04" }, "geometry": { "type": "Point", "coordinates": [ 191225.717521025857423, 188084.617381138668861 ] } },
+{ "type": "Feature", "properties": { "APName": "MA-1F-A03" }, "geometry": { "type": "Point", "coordinates": [ 191216.550861096155131, 188084.462669578671921 ] } },
+{ "type": "Feature", "properties": { "APName": "MA-1F-A02" }, "geometry": { "type": "Point", "coordinates": [ 191211.251990166318137, 188084.578703248669626 ] } },
+{ "type": "Feature", "properties": { "APName": "MA-1F-A01" }, "geometry": { "type": "Point", "coordinates": [ 191166.46299354772782, 188083.263654988753842 ] } },
+{ "type": "Feature", "properties": { "APName": "M-1F-A08" }, "geometry": { "type": "Point", "coordinates": [ 191167.515734596381662, 188059.197350580710918 ] } },
+{ "type": "Feature", "properties": { "APName": "M-1F-A07" }, "geometry": { "type": "Point", "coordinates": [ 191165.744430249091238, 188046.798220149677945 ] } },
+{ "type": "Feature", "properties": { "APName": "M-1F-A05" }, "geometry": { "type": "Point", "coordinates": [ 191166.334557060356019, 188024.898524633259512 ] } },
+{ "type": "Feature", "properties": { "APName": "M-1F-A03" }, "geometry": { "type": "Point", "coordinates": [ 191166.872279762057588, 188002.67265296401456 ] } },
+{ "type": "Feature", "properties": { "APName": "M-1F-A01" }, "geometry": { "type": "Point", "coordinates": [ 191167.230761563172564, 187984.65894245787058 ] } },
+{ "type": "Feature", "properties": { "APName": "D-1F-A03" }, "geometry": { "type": "Point", "coordinates": [ 191240.518489730398869, 188022.219886175182182 ] } },
+{ "type": "Feature", "properties": { "APName": "D-1F-A02" }, "geometry": { "type": "Point", "coordinates": [ 191240.685199290426681, 188013.38602373318281 ] } },
+{ "type": "Feature", "properties": { "APName": "D-1F-A01" }, "geometry": { "type": "Point", "coordinates": [ 191240.848489265976241, 188004.515976240654709 ] } }
+]
+}
