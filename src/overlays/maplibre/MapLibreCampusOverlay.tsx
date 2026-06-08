@@ -9,6 +9,7 @@ import {
 import maplibregl from "maplibre-gl";
 import type { CampusOverlayBaseProps } from "../types";
 import type { CampusWgs84Feature } from "../../schemas/campusWgs84Geojson";
+import type { SchoolOutlineFeatureCollection } from "../../data/school-outline";
 import {
   filterFeaturesByLevel,
   getAvailableLevels,
@@ -24,6 +25,7 @@ export interface MapLibreCampusOverlayProps extends CampusOverlayBaseProps {
   mapOptions?: Omit<maplibregl.MapOptions, "container">;
   rasterStyle?: "osm" | "none";
   selectedRoomName?: string | null;
+  schoolOutline?: SchoolOutlineFeatureCollection;
 }
 
 // ─── Styles ───────────────────────────────────────────────────────
@@ -103,6 +105,7 @@ export function MapLibreCampusOverlay({
   mapOptions,
   rasterStyle = "osm",
   selectedRoomName = null,
+  schoolOutline,
 }: MapLibreCampusOverlayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -148,6 +151,35 @@ export function MapLibreCampusOverlay({
       const level = currentLevelRef.current || currentLevel;
       const features = filterFeaturesByLevel(data, level);
       featuresRef.current = features;
+
+      if (schoolOutline) {
+        map.addSource("school-outline", {
+          type: "geojson",
+          data: schoolOutline,
+        });
+        map.addLayer({
+          id: "school-outline-fill",
+          type: "fill",
+          source: "school-outline",
+          paint: {
+            "fill-color":
+              "#e2e8f0" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+            "fill-opacity":
+              0.1 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          },
+        });
+        map.addLayer({
+          id: "school-outline-line",
+          type: "line",
+          source: "school-outline",
+          paint: {
+            "line-color":
+              "#0f172a" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+            "line-width":
+              3 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          },
+        });
+      }
 
       // Add GeoJSON source
       map.addSource("campus", {

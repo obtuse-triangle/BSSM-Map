@@ -26,6 +26,11 @@
       "import": "./dist/data/campus-wgs84.mjs",
       "require": "./dist/data/campus-wgs84.js"
     },
+    "./data/school-outline": {
+      "types": "./dist/data/school-outline.d.ts",
+      "import": "./dist/data/school-outline.mjs",
+      "require": "./dist/data/school-outline.js"
+    },
     "./overlays/maplibre": {
       "types": "./dist/overlays/maplibre.d.ts",
       "import": "./dist/overlays/maplibre.mjs",

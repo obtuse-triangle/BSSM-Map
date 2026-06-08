@@ -6,6 +6,7 @@ export default defineConfig({
     "data/bssm": "src/data/bssm.ts",
     "data/campus": "src/data/campus.ts",
     "data/campus-wgs84": "src/data/campus-wgs84.ts",
+    "data/school-outline": "src/data/school-outline.ts",
     "overlays/maplibre": "src/overlays/maplibre.ts",
     "overlays/leaflet": "src/overlays/leaflet.ts",
   },
