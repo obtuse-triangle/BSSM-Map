@@ -1,4 +1,6 @@
-// Leaflet overlay subpath entry — component exports added in Task 4
+export { LeafletCampusOverlay } from "./leaflet/LeafletCampusOverlay";
+export type { LeafletCampusOverlayProps } from "./leaflet/LeafletCampusOverlay";
+
 export type {
   OverlayLngLat,
   OverlaySelectionContext,

@@ -1,4 +1,6 @@
-// MapLibre overlay subpath entry — component exports added in Task 3
+export { MapLibreCampusOverlay } from "./maplibre/MapLibreCampusOverlay";
+export type { MapLibreCampusOverlayProps } from "./maplibre/MapLibreCampusOverlay";
+
 export type {
   OverlayLngLat,
   OverlaySelectionContext,
