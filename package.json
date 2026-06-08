@@ -15,6 +15,26 @@
       "types": "./dist/data/bssm.d.ts",
       "import": "./dist/data/bssm.mjs",
       "require": "./dist/data/bssm.js"
+    },
+    "./data/campus": {
+      "types": "./dist/data/campus.d.ts",
+      "import": "./dist/data/campus.mjs",
+      "require": "./dist/data/campus.js"
+    },
+    "./data/campus-wgs84": {
+      "types": "./dist/data/campus-wgs84.d.ts",
+      "import": "./dist/data/campus-wgs84.mjs",
+      "require": "./dist/data/campus-wgs84.js"
+    },
+    "./overlays/maplibre": {
+      "types": "./dist/overlays/maplibre.d.ts",
+      "import": "./dist/overlays/maplibre.mjs",
+      "require": "./dist/overlays/maplibre.js"
+    },
+    "./overlays/leaflet": {
+      "types": "./dist/overlays/leaflet.d.ts",
+      "import": "./dist/overlays/leaflet.mjs",
+      "require": "./dist/overlays/leaflet.js"
     }
   },
   "files": [
@@ -23,18 +43,31 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test": "vitest run"
   },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
-    "react-zoom-pan-pinch": ">=3"
+    "react-zoom-pan-pinch": ">=3",
+    "maplibre-gl": ">=3",
+    "leaflet": ">=1.9"
+  },
+  "peerDependenciesMeta": {
+    "maplibre-gl": { "optional": true },
+    "leaflet": { "optional": true }
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
+    "fast-xml-parser": "^5.8.0",
+    "jsdom": "^29.1.1",
     "tsup": "^8.4.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.7",
+    "zod": "^4.4.3"
   },
   "keywords": [
     "react",
