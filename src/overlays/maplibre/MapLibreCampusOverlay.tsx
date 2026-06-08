@@ -23,6 +23,7 @@ import type { OverlayCategoryStyle } from "../types";
 export interface MapLibreCampusOverlayProps extends CampusOverlayBaseProps {
   mapOptions?: Omit<maplibregl.MapOptions, "container">;
   rasterStyle?: "osm" | "none";
+  selectedRoomName?: string | null;
 }
 
 // ─── Styles ───────────────────────────────────────────────────────
@@ -59,6 +60,7 @@ const levelButtonStyle = (active: boolean): CSSProperties => ({
 
 const OSM_STYLE: maplibregl.StyleSpecification = {
   version: 8,
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources: {
     osm: {
       type: "raster",
@@ -80,6 +82,7 @@ const OSM_STYLE: maplibregl.StyleSpecification = {
 
 const EMPTY_STYLE: maplibregl.StyleSpecification = {
   version: 8,
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources: {},
   layers: [],
 };
@@ -99,6 +102,7 @@ export function MapLibreCampusOverlay({
   categoryStyles,
   mapOptions,
   rasterStyle = "osm",
+  selectedRoomName = null,
 }: MapLibreCampusOverlayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -170,6 +174,20 @@ export function MapLibreCampusOverlay({
       fillColorExpr.push("#eeeeee");
       fillOutlineExpr.push("#9e9e9e");
 
+      // Structural outline layer (before fill so rooms draw on top)
+      map.addLayer({
+        id: "campus-outline-line",
+        type: "line",
+        source: "campus",
+        filter: ["==", ["get", "category"], "structural"],
+        paint: {
+          "line-color":
+            "#1f2937" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "line-width":
+            3 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+        },
+      });
+
       // Fill layer
       map.addLayer({
         id: "campus-fill",
@@ -193,6 +211,64 @@ export function MapLibreCampusOverlay({
             "#555555" as maplibregl.DataDrivenPropertyValueSpecification<string>,
           "line-width":
             1 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+        },
+      });
+
+      // Selected room fill highlight (semi-transparent blue overlay)
+      map.addLayer({
+        id: "campus-selected-fill",
+        type: "fill",
+        source: "campus",
+        filter: ["==", ["get", "name"], selectedRoomName ?? ""],
+        paint: {
+          "fill-color":
+            "#3b82f6" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "fill-opacity":
+            0.18 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+        },
+      });
+
+      // Selected room outline highlight (thick blue border)
+      map.addLayer({
+        id: "campus-selected-line",
+        type: "line",
+        source: "campus",
+        filter: ["==", ["get", "name"], selectedRoomName ?? ""],
+        paint: {
+          "line-color":
+            "#2563eb" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "line-width":
+            4 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          "line-opacity":
+            0.95 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+        },
+      });
+
+      // Symbol layer for room name labels
+      map.addLayer({
+        id: "campus-label",
+        type: "symbol",
+        source: "campus",
+        filter: [
+          "all",
+          ["==", ["get", "interactive"], true],
+          ["in", ["get", "category"], ["literal", ["room", "classroom", "office", "facility"]]],
+        ],
+        layout: {
+          "text-field": ["coalesce", ["get", "name_ko"], ["get", "name"]] as unknown as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "text-font": ["Open Sans Regular"],
+          "text-size": 11,
+          "text-padding": 4,
+          "text-allow-overlap": false,
+          "text-ignore-placement": false,
+        },
+        paint: {
+          "text-color":
+            "#0f172a" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "text-halo-color":
+            "#ffffff" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "text-halo-width":
+            1.5 as maplibregl.DataDrivenPropertyValueSpecification<number>,
         },
       });
 
@@ -275,6 +351,22 @@ export function MapLibreCampusOverlay({
       );
     }
   }, [currentLevel, levelFeatures]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const filter = selectedRoomName
+      ? (["==", ["get", "name"], selectedRoomName] as never)
+      : (["==", ["get", "name"], ""] as never);
+
+    try {
+      map.setFilter("campus-selected-fill", filter);
+      map.setFilter("campus-selected-line", filter);
+    } catch {
+      // layers not yet added — will be set on initial load
+    }
+  }, [selectedRoomName]);
 
   // ── Level change handler ──
   const handleLevelChange = useCallback(
