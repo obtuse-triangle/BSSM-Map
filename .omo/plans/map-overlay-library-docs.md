@@ -322,7 +322,7 @@ Wave 5: Task 7 CI/package verification and final cleanup.
 
   **Commit**: YES | Message: `feat(overlay): add leaflet campus component` | Files: [`src/overlays/leaflet.ts`, `src/overlays/leaflet/LeafletCampusOverlay.tsx`, `test/overlays/LeafletCampusOverlay.test.tsx`]
 
-- [ ] 5. Update Demo to Consume Library Overlay Component
+- [x] 5. Update Demo to Consume Library Overlay Component
 
   **What to do**: Add a demo build/type test first if missing, then replace or wrap the current demo MapLibre overlay implementation with the exported `MapLibreCampusOverlay` from `school-floor-map/overlays/maplibre`. Keep demo-specific tile choices, labels, and Korean UI outside the library component through props. Display selected place data from the callback in the demo UI or popup so the callback requirement is visibly exercised.
   **Must NOT do**: Do not move the entire `demo/src/App.tsx` map implementation into the library; do not remove existing legacy floor map and campus outline tabs.
@@ -363,7 +363,7 @@ Wave 5: Task 7 CI/package verification and final cleanup.
 
   **Commit**: YES | Message: `demo: use library map overlay component` | Files: [`demo/src/App.tsx`, `demo/package.json`]
 
-- [ ] 6. Write Full Overlay Documentation
+- [x] 6. Write Full Overlay Documentation
 
   **What to do**: Update README and create a dedicated overlay guide. README must summarize install, imports, data export, component props, and callback usage. Add `docs/overlay-guide.md` with MapLibre example, Leaflet example, callback payload contract, styling/customization, WGS84 data export, demo walkthrough, and accuracy caveats. Include clear notes that `geojsonToFloorMapData` is lossy and for legacy `FloorMap` only. Mention Leaflet CSS requirement and optional peer dependency setup.
   **Must NOT do**: Do not promise GPS-precise/survey-grade positioning; do not document `CampusMap mode="overlay"` as the preferred API if new components replace the placeholder.
@@ -404,7 +404,7 @@ Wave 5: Task 7 CI/package verification and final cleanup.
 
   **Commit**: YES | Message: `docs: document map overlay components` | Files: [`README.md`, `docs/overlay-guide.md`, `demo/README.md`]
 
-- [ ] 7. Add CI Test Gate and Final Package Verification
+- [x] 7. Add CI Test Gate and Final Package Verification
 
   **What to do**: Add `pnpm test` and `pnpm lint` to `.github/workflows/deploy-demo.yml` before build steps. Add any final package export smoke tests needed to verify root and subpath imports. Run full local verification and capture evidence.
   **Must NOT do**: Do not add coverage thresholds, matrix builds, release automation, or unrelated ESLint setup in this task.
@@ -451,7 +451,7 @@ Wave 5: Task 7 CI/package verification and final cleanup.
 > **Do NOT auto-proceed after verification. Wait for user's explicit approval before marking work complete.**
 > **Never mark F1-F4 as checked before getting user's okay.** Rejection or user feedback -> fix -> re-run -> present again -> wait for okay.
 - [ ] F1. Plan Compliance Audit — oracle
-- [ ] F2. Code Quality Review — unspecified-high
+- [x] F2. Code Quality Review — unspecified-high
 - [ ] F3. Real Manual QA — unspecified-high (+ playwright if UI)
 - [ ] F4. Scope Fidelity Check — deep
 

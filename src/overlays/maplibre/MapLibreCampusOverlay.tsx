@@ -1,11 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-  useCallback,
-  type CSSProperties,
-} from "react";
+import { useEffect, useRef, useState, useMemo, useCallback, type CSSProperties } from "react";
 import maplibregl from "maplibre-gl";
 import type { CampusOverlayBaseProps } from "../types";
 import type { CampusWgs84Feature } from "../../schemas/campusWgs84Geojson";
@@ -26,6 +19,9 @@ export interface MapLibreCampusOverlayProps extends CampusOverlayBaseProps {
   rasterStyle?: "osm" | "none";
   selectedRoomName?: string | null;
   schoolOutline?: SchoolOutlineFeatureCollection;
+  /** Called once after the MapLibre map instance finishes loading */
+  onMapReady?: (map: maplibregl.Map) => void;
+  isPopup?: boolean;
 }
 
 // ─── Styles ───────────────────────────────────────────────────────
@@ -106,6 +102,8 @@ export function MapLibreCampusOverlay({
   rasterStyle = "osm",
   selectedRoomName = null,
   schoolOutline,
+  onMapReady,
+  isPopup = false,
 }: MapLibreCampusOverlayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -139,15 +137,30 @@ export function MapLibreCampusOverlay({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const map = new maplibregl.Map({
+    const mapOpts: any = {
       container: containerRef.current,
       style: rasterStyle === "osm" ? OSM_STYLE : EMPTY_STYLE,
+      zoom: isPopup ? 16 : 1,
+      center: [128.9037, 35.1884],
       ...mapOptions,
-    });
+    };
+
+    if (!isPopup) {
+      mapOpts.projection = { type: "globe" };
+    }
+
+    const map = new maplibregl.Map(mapOpts);
 
     mapRef.current = map;
 
     map.on("load", () => {
+      if (!isPopup) {
+        try {
+          map.setProjection({ type: "globe" });
+        } catch (e) {
+          console.error("Failed to set globe projection:", e);
+        }
+      }
       const level = currentLevelRef.current || currentLevel;
       const features = filterFeaturesByLevel(data, level);
       featuresRef.current = features;
@@ -162,10 +175,8 @@ export function MapLibreCampusOverlay({
           type: "fill",
           source: "school-outline",
           paint: {
-            "fill-color":
-              "#e2e8f0" as maplibregl.DataDrivenPropertyValueSpecification<string>,
-            "fill-opacity":
-              0.1 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+            "fill-color": "#e2e8f0" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+            "fill-opacity": 0.1 as maplibregl.DataDrivenPropertyValueSpecification<number>,
           },
         });
         map.addLayer({
@@ -173,10 +184,8 @@ export function MapLibreCampusOverlay({
           type: "line",
           source: "school-outline",
           paint: {
-            "line-color":
-              "#0f172a" as maplibregl.DataDrivenPropertyValueSpecification<string>,
-            "line-width":
-              3 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+            "line-color": "#0f172a" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+            "line-width": 3 as maplibregl.DataDrivenPropertyValueSpecification<number>,
           },
         });
       }
@@ -188,20 +197,11 @@ export function MapLibreCampusOverlay({
       });
 
       // Build data-driven fill-color expression from category styles
-      const fillColorExpr: unknown[] = [
-        "match",
-        ["get", "category"],
-      ];
-      const fillOutlineExpr: unknown[] = [
-        "match",
-        ["get", "category"],
-      ];
+      const fillColorExpr: unknown[] = ["match", ["get", "category"]];
+      const fillOutlineExpr: unknown[] = ["match", ["get", "category"]];
       for (const [cat, s] of Object.entries(mergedStyles)) {
         fillColorExpr.push(cat, s.fillColor);
-        fillOutlineExpr.push(
-          cat,
-          s.strokeColor ?? s.fillColor,
-        );
+        fillOutlineExpr.push(cat, s.strokeColor ?? s.fillColor);
       }
       fillColorExpr.push("#eeeeee");
       fillOutlineExpr.push("#9e9e9e");
@@ -213,10 +213,8 @@ export function MapLibreCampusOverlay({
         source: "campus",
         filter: ["==", ["get", "category"], "structural"],
         paint: {
-          "line-color":
-            "#1f2937" as maplibregl.DataDrivenPropertyValueSpecification<string>,
-          "line-width":
-            3 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          "line-color": "#1f2937" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "line-width": 3 as maplibregl.DataDrivenPropertyValueSpecification<number>,
         },
       });
 
@@ -227,9 +225,9 @@ export function MapLibreCampusOverlay({
         source: "campus",
         paint: {
           "fill-color": fillColorExpr as maplibregl.DataDrivenPropertyValueSpecification<string>,
-          "fill-opacity":
-            0.5 as maplibregl.DataDrivenPropertyValueSpecification<number>,
-          "fill-outline-color": fillOutlineExpr as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "fill-opacity": 0.5 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          "fill-outline-color":
+            fillOutlineExpr as maplibregl.DataDrivenPropertyValueSpecification<string>,
         },
       });
 
@@ -239,10 +237,8 @@ export function MapLibreCampusOverlay({
         type: "line",
         source: "campus",
         paint: {
-          "line-color":
-            "#555555" as maplibregl.DataDrivenPropertyValueSpecification<string>,
-          "line-width":
-            1 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          "line-color": "#555555" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "line-width": 1 as maplibregl.DataDrivenPropertyValueSpecification<number>,
         },
       });
 
@@ -253,10 +249,8 @@ export function MapLibreCampusOverlay({
         source: "campus",
         filter: ["==", ["get", "name"], selectedRoomName ?? ""],
         paint: {
-          "fill-color":
-            "#3b82f6" as maplibregl.DataDrivenPropertyValueSpecification<string>,
-          "fill-opacity":
-            0.18 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          "fill-color": "#3b82f6" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "fill-opacity": 0.18 as maplibregl.DataDrivenPropertyValueSpecification<number>,
         },
       });
 
@@ -267,12 +261,9 @@ export function MapLibreCampusOverlay({
         source: "campus",
         filter: ["==", ["get", "name"], selectedRoomName ?? ""],
         paint: {
-          "line-color":
-            "#2563eb" as maplibregl.DataDrivenPropertyValueSpecification<string>,
-          "line-width":
-            4 as maplibregl.DataDrivenPropertyValueSpecification<number>,
-          "line-opacity":
-            0.95 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          "line-color": "#2563eb" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "line-width": 4 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          "line-opacity": 0.95 as maplibregl.DataDrivenPropertyValueSpecification<number>,
         },
       });
 
@@ -287,7 +278,11 @@ export function MapLibreCampusOverlay({
           ["in", ["get", "category"], ["literal", ["room", "classroom", "office", "facility"]]],
         ],
         layout: {
-          "text-field": ["coalesce", ["get", "name_ko"], ["get", "name"]] as unknown as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "text-field": [
+            "coalesce",
+            ["get", "name_ko"],
+            ["get", "name"],
+          ] as unknown as maplibregl.DataDrivenPropertyValueSpecification<string>,
           "text-font": ["Open Sans Regular"],
           "text-size": 11,
           "text-padding": 4,
@@ -295,26 +290,41 @@ export function MapLibreCampusOverlay({
           "text-ignore-placement": false,
         },
         paint: {
-          "text-color":
-            "#0f172a" as maplibregl.DataDrivenPropertyValueSpecification<string>,
-          "text-halo-color":
-            "#ffffff" as maplibregl.DataDrivenPropertyValueSpecification<string>,
-          "text-halo-width":
-            1.5 as maplibregl.DataDrivenPropertyValueSpecification<number>,
+          "text-color": "#0f172a" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "text-halo-color": "#ffffff" as maplibregl.DataDrivenPropertyValueSpecification<string>,
+          "text-halo-width": 1.5 as maplibregl.DataDrivenPropertyValueSpecification<number>,
         },
       });
 
       // Fit bounds to features
       if (features.length > 0) {
         const bounds = getFeatureBounds(features);
-        map.fitBounds(
-          [
-            [bounds.west, bounds.south],
-            [bounds.east, bounds.north],
-          ],
-          { padding: 40 },
-        );
+        if (isPopup) {
+          map.fitBounds(
+            [
+              [bounds.west, bounds.south],
+              [bounds.east, bounds.north],
+            ],
+            { padding: 40, animate: false },
+          );
+        } else {
+          map.fitBounds(
+            [
+              [bounds.west, bounds.south],
+              [bounds.east, bounds.north],
+            ],
+            {
+              padding: 40,
+              duration: 6500,
+              pitch: 0,
+              bearing: 0,
+              essential: true,
+            } as any,
+          );
+        }
       }
+
+      onMapReady?.(map);
     });
 
     // Click handler on campus-fill layer
@@ -325,9 +335,10 @@ export function MapLibreCampusOverlay({
         if (!e.features || e.features.length === 0) return;
         const mapFeature = e.features[0];
         // Find matching CampusWgs84Feature from our data
-        const feature = featuresRef.current.find(
-          (f) => f.properties.name === (mapFeature.properties as Record<string, unknown>).name,
-        ) ?? featuresRef.current[0];
+        const feature =
+          featuresRef.current.find(
+            (f) => f.properties.name === (mapFeature.properties as Record<string, unknown>).name,
+          ) ?? featuresRef.current[0];
         if (!feature) return;
 
         onFeatureSelect?.(feature, {
@@ -379,10 +390,10 @@ export function MapLibreCampusOverlay({
           [bounds.west, bounds.south],
           [bounds.east, bounds.north],
         ],
-        { padding: 40 },
+        { padding: 40, animate: !isPopup },
       );
     }
-  }, [currentLevel, levelFeatures]);
+  }, [currentLevel, levelFeatures, isPopup]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -414,11 +425,7 @@ export function MapLibreCampusOverlay({
   );
 
   return (
-    <div
-      ref={containerRef}
-      className={className}
-      style={{ ...containerStyle, ...style }}
-    >
+    <div ref={containerRef} className={className} style={{ ...containerStyle, ...style }}>
       {showLevelSelector && levels.length > 0 && (
         <div style={levelSelectorStyle} data-testid="level-selector">
           {levels.map((level) => (
