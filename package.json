@@ -49,7 +49,8 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepare": "tsup"
   },
   "peerDependencies": {
     "leaflet": ">=1.9",
